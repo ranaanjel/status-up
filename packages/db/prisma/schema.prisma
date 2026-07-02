@@ -23,7 +23,7 @@ model users {
 model websites {
   id        String         @id @default(uuid())
   url       String
-  timeAdded DateTime       @default(now())
+  time_added DateTime       @default(now())
   ticks     website_ticks[]
   userId    Int
   user      users          @relation(fields: [userId], references: [id])
@@ -43,7 +43,7 @@ model website_ticks {
   websiteId       String
   region          regions       @relation(fields: [regionId], references: [id])
   regionId        String
-  timeAdded       DateTime      @default(now())
+  time_added       DateTime      @default(now())
 }
 
 enum website_status {

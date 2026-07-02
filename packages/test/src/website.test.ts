@@ -1,87 +1,70 @@
-import {describe, it, expect} from "bun:test"
+import {describe, it, expect, beforeAll} from "bun:test"
 import axios from "axios"
-import { BACKEND_URL, USER_NAME } from "./util"
+import { randomUser } from "./util"
 
-describe("test signup endpoints",()=> {
-    it("signup should not happen", async () => {
+const BACKEND_WEB_URL = "http://localhost:3000/api/v1/websites";
+
+describe("test website creation endpoints",()=> {
+
+    //getting the data regarding fake user 
+    let user_id , token :string;
+
+    beforeAll(async () => {
+        let data = await randomUser();
+        user_id = data.user_id;
+        token = data.jwt;
+
+    })
+
+    it("website creation should not happen", async () => {
       try {
-        let signupRes = await axios.post(BACKEND_URL+"/signup", {
+        let signupRes = await axios.post(BACKEND_WEB_URL+"/website", {
                 data :{
                 }
             });
             expect(false, "Control shouldn't reach here");
         }
       catch (e) {
-        console.log(e, "ERR")
+        console.log("ERR")
       }
     })
-    it("signin should happen", async () => {
+    it("website creation should happen", async () => {
           try {
-        let signupRes = await axios.post(BACKEND_URL+"/signup", {
-                data :{
-                    name:USER_NAME, 
-                    password : "same_password",
-                    email : USER_NAME+"@gmail.com"
+           
+        let website_res = await axios.post(BACKEND_WEB_URL+"/website", {
+                    url : "facebook.com"
+            }, {
+                headers : {
+                    Authorization : token
                 }
             });
-            expect(signupRes.data.id).toBeDefined();
-            expect(signupRes.status).toBe(200);
-
+            
+            expect(website_res.status).toBe(200);
+            expect(website_res.data.website_id).toBeDefined();
         }
       catch (e) {
-        console.log(e, "ERR")
+         console.log( "ERR")
+         expect(false, "not to be failed")
       }
     })
 })
 
-describe("test signin endpoints",()=> {
+describe("test website data status - ticks ",()=> {
 
-    it("signin should not happen due to lack of data", async () => {
-          try {
-        let signupRes = await axios.post(BACKEND_URL+"/signin", {
-                data :{
-                }
-            });
-            expect(false, "should reach here - above should throw error");
-        }
-      catch (e) {
-        console.log(e, "ERR")
-      }
+    // it("", async () => {
+    //       try {
+    //     let signupRes = await axios.post(BACKEND_WEB_URL+"/signin", {
+    //             data :{
+    //             }
+    //         });
+    //         expect(false, "should reach here - above should throw error");
+    //     }
+    //   catch (e) {
+    //     console.log(e, "ERR")
+    //   }
 
-    })
+    // })
 
-    it("signin should not happen due to wrong info", async () => {
-          try {
-        let signupRes = await axios.post(BACKEND_URL+"/signin", {
-                data :{
-                    name:USER_NAME, 
-                    password : "wrong_password",
-                    email : USER_NAME+"@gmail.com"
-                }
-            });
-            expect(false, "shouldn't reach here, above should throw error");
-        }
-      catch (e) {
-        console.log(e, "ERR")
-      }
-
-    })
-
-    it("sign should happen", async () => {
-          try {
-        let signinRes = await axios.post(BACKEND_URL+"/signin", {
-                data :{
-                    name:USER_NAME, 
-                    password : "same_password",
-                    email : USER_NAME+"@gmail.com"
-                }
-            });
-            expect(signinRes.status).toBe(200);
-            expect(signinRes.data.jwt).toBeDefined();
-        }
-      catch (e) {
-        console.log(e, "ERR")
-      } 
-    })
+  
 
 })

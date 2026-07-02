@@ -16,6 +16,6 @@ export async function AuthValidation(req:Request, res:Response, next:NextFunctio
 
     // verifying the token
     let user_token = jwt.verify(token, process.env.JWT_SECRET!)!;
-    req.user_id = token; 
+    req.user_id = user_token.sub as string; 
     next();
 }
