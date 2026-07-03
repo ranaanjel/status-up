@@ -6,8 +6,7 @@ describe("test signup endpoints",()=> {
     it("signup should not happen", async () => {
       try {
         let signupRes = await axios.post(BACKEND_URL+"/signup", {
-                data :{
-                }
+                
             });
             expect(false, "Control shouldn't reach here");
         }
@@ -23,6 +22,7 @@ describe("test signup endpoints",()=> {
                     email : USER_NAME+"@gmail.com"
                 
             });
+           
             expect(signupRes.data.user_id).toBeDefined();
             expect(signupRes.status).toBe(200);
             // console.log(signupRes.status)
