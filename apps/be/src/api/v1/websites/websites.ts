@@ -47,8 +47,8 @@ WebsiteRouter.get("/status/:website_id", AuthValidation, async (req, res) => {
       userId:parseInt(user_id)
     },
     include : {
-        ticks : {
-          take:1, 
+        ticks : { 
+          take:20,
           orderBy :[{
             "time_added":"desc"
           }]
@@ -66,8 +66,39 @@ WebsiteRouter.get("/status/:website_id", AuthValidation, async (req, res) => {
   res.json({
     url : website_res.url,
     id : website_res.id,
-    user_id : website_res.userId
+    user_id : website_res.userId,
+    ticks:website_res.ticks
   })
+
+});
+
+WebsiteRouter.get("/website", AuthValidation, async (req, res) => {
+
+  let user_id = req.user_id!;
+  let website_res = await prisma.websites.findMany({
+    where:{
+      userId:parseInt(user_id)
+    },
+    include : {
+        ticks : {
+          take:1,
+          orderBy :[{
+            "time_added":"desc"
+          }]
+        }   
+    }
+  }) 
+
+  if (!website_res) {
+    res.status(409).json({
+      message:"Conflict"
+    })
+    return;
+  }
+
+  res.json(
+    {websiteList : website_res}
+  )
 
 });
 

@@ -8,8 +8,10 @@ async function main() {
     let websites = await prisma.websites.findMany();
 
     if(websites) {
+
         let sendingData = websites.map((value) => 
             {
+            console.log(value.url)
                 let url = value.url; 
                 let id = value.id;
             

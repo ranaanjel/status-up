@@ -15,11 +15,14 @@ const WORKER_ID =  "1";
 
 async function main() {
     // a loop that keep on running and wait for the new values in the queues
+    while(1) {
     let res : {id:string, message:{url:string, id:string}}[] = await xReadGroup(REGION_VALUE, WORKER_ID);
-    if(res.length == 0 || !res) {
+    
+    if ( !res || res.length == 0 ) {
         return ;
     }
 
+    console.log(res, "-----")
     
     let promises = res.map(({message}) => fetch_webinfo(message.url, message.id))
     await Promise.all(promises);
@@ -27,11 +30,11 @@ async function main() {
     // acknowledging
 
     xAckBulk(REGION_VALUE, res.map(obj => obj.id));
+}
 
 }
 
 function fetch_webinfo(url:string, id : string) {
-
 
     return new Promise<void>( (resolve, reject)=>{
 
@@ -44,6 +47,13 @@ function fetch_webinfo(url:string, id : string) {
         .then(async () => {
             // data 
             let currentTime =  Date.now();
+
+            console.log(  {
+                "reponse_time_ms" : currentTime - startDate,
+                "status" : "UP",
+                "websiteId" : id,
+                "regionId":REGION_ID
+            } )
             
             await prisma.website_ticks.create({
                 data : {
